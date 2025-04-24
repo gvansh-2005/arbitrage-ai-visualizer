@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { multiAgentSystem, AgentAction, AgentObservation } from '../utils/transformerAgents';
 import { useToast } from '@/hooks/use-toast';
 

@@ -20,6 +20,7 @@ export interface AgentAction {
   price: number;
   timestamp: number;
   confidence: number;
+  exchangeId: string; // Added exchangeId to track which exchange this action is for
 }
 
 export interface TransformerAgent {
@@ -127,7 +128,8 @@ export class MultiAgentArbitrageSystem {
       volume: this.calculateOptimalVolume(confidence, currentObs),
       price: currentObs.price,
       timestamp: currentObs.timestamp,
-      confidence
+      confidence,
+      exchangeId: currentObs.exchangeId  // Set the exchangeId from the observation
     };
 
     return action;

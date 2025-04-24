@@ -1,3 +1,4 @@
+
 import {
   ArbitrageDataPoint,
   AgentAction,
@@ -9,7 +10,7 @@ import {
   generateAgentCommunications,
   calculatePerformanceMetrics
 } from './dataGenerator';
-import { multiAgentSystem } from './transformerAgents';
+import { multiAgentSystem, AgentAction as TransformerAgentAction } from './transformerAgents';
 
 export interface ModelState {
   isTraining: boolean;
@@ -89,6 +90,33 @@ export const processData = async (
   };
 };
 
+// Convert transformer agent actions to dataGenerator-compatible format
+const convertTransformerActionsToDataFormat = (
+  actions: TransformerAgentAction[],
+  exchangeMapping: Record<string, string>
+): AgentAction[] => {
+  return actions.map((action, index) => {
+    const exchange = action.exchangeId || Object.values(exchangeMapping)[index % Object.values(exchangeMapping).length];
+    const agentId = `Agent_${exchange}`;
+    
+    // Calculate profit based on action type and confidence
+    const baseProfit = action.type === 'buy' ? 0 : action.price * action.volume * action.confidence;
+    const impact = action.type === 'hold' ? 0 : 0.01 * action.volume;
+    
+    return {
+      timestamp: action.timestamp,
+      agent: agentId,
+      exchange: exchange,
+      action: action.type,
+      volume: action.volume,
+      price: action.price,
+      profit: baseProfit,
+      impact: impact,
+      netProfit: baseProfit - (impact * action.volume)
+    };
+  });
+};
+
 export const trainModel = async (
   rawData: ArbitrageDataPoint[],
   epochs: number = 100,
@@ -112,24 +140,33 @@ export const trainModel = async (
     timestamp: data.timestamp,
     price: data.price,
     volume: data.volume,
-    liquidity: data.liquidity,
+    liquidity: data.liquidity_level, // Use liquidity_level property which exists on ArbitrageDataPoint
     spread: Math.abs(data.ask - data.bid),
     exchangeId: data.exchange_id
   }));
 
+  // Map exchanges to their IDs for conversion later
+  const exchangeMapping: Record<string, string> = {};
+  rawData.forEach(data => {
+    exchangeMapping[data.exchange_id] = data.exchange_id;
+  });
+
   // Process data through transformer agents
-  const actions = await multiAgentSystem.processMarketData(observations);
+  const transformerActions = await multiAgentSystem.processMarketData(observations);
+  
+  // Convert transformer actions to dataGenerator compatible format
+  const compatibleActions = convertTransformerActionsToDataFormat(transformerActions, exchangeMapping);
   
   // Generate communications and calculate metrics
-  const communications = generateAgentCommunications(actions);
-  const metrics = calculatePerformanceMetrics(actions);
+  const communications = generateAgentCommunications(compatibleActions);
+  const metrics = calculatePerformanceMetrics(compatibleActions);
 
   // Return final state
   return {
     dataLoaded: true,
     isProcessing: false,
     rawData,
-    actions,
+    actions: compatibleActions,
     communications,
     metrics,
     modelState: {
