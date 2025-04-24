@@ -1,9 +1,9 @@
-
 import { pipeline, env } from '@huggingface/transformers';
 
-// Enable WebGPU for better performance if available
+// Enable WebGPU and configure environment
 env.useBrowserCache = true;
 env.backends.onnx.wasm.numThreads = 4;
+env.huggingFaceAccessToken = process.env.HUGGING_FACE_ACCESS_TOKEN;
 
 export interface AgentObservation {
   timestamp: number;
@@ -40,11 +40,14 @@ export class MultiAgentArbitrageSystem {
 
   private async initializeSystem() {
     try {
-      // Initialize feature extractor for market data
+      // Initialize feature extractor with auth token
       this.featureExtractor = await pipeline(
         'feature-extraction',
         'mixedbread-ai/mxbai-embed-xsmall-v1',
-        { device: 'webgpu' }
+        { 
+          device: 'webgpu',
+          huggingFaceAccessToken: env.huggingFaceAccessToken 
+        }
       );
 
       // Initialize agents for different exchanges
@@ -66,11 +69,14 @@ export class MultiAgentArbitrageSystem {
   }
 
   private async initializeAgentModel() {
-    // Initialize sequence classification pipeline for action decisions
+    // Initialize sequence classification pipeline with auth token
     return await pipeline(
       'text-classification',
       'onnx-community/distilbert-base-uncased-finetuned-sst-2-english',
-      { device: 'webgpu' }
+      { 
+        device: 'webgpu',
+        huggingFaceAccessToken: env.huggingFaceAccessToken 
+      }
     );
   }
 
