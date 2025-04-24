@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -52,6 +53,30 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Financial theme colors
+				profit: {
+					DEFAULT: '#0ECB81',
+					light: '#7FFFD4',
+					dark: '#096C45',
+				},
+				loss: {
+					DEFAULT: '#F6465D',
+					light: '#FFB8C5',
+					dark: '#8B0000',
+				},
+				neutral: {
+					DEFAULT: '#B8B8B8',
+					light: '#E0E0E0',
+					dark: '#666666',
+				},
+				chart: {
+					blue: '#2962FF',
+					teal: '#00BCD4',
+					purple: '#7B1FA2',
+					amber: '#FFC107',
+					cyan: '#00E5FF',
+					indigo: '#3D5AFE',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -70,25 +95,27 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'pulse-opacity': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.5' }
+				},
+				'fade-in': {
+					from: { opacity: '0' },
+					to: { opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-opacity': 'pulse-opacity 2s infinite',
+				'fade-in': 'fade-in 0.5s ease-out'
 			}
 		}
 	},
