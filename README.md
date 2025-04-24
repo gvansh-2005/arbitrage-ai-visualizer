@@ -19,6 +19,8 @@ export HUGGING_FACE_ACCESS_TOKEN=your_token_here
 npm run dev
 ```
 
+> Note: If you're having issues with token authentication, the system will attempt to use publicly available models without requiring authentication.
+
 ## How can I edit this code?
 
 There are several ways of editing your application.
