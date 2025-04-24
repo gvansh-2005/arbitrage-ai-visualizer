@@ -1,9 +1,13 @@
+
 import { pipeline, env } from '@huggingface/transformers';
 
 // Enable WebGPU and configure environment
 env.useBrowserCache = true;
 env.backends.onnx.wasm.numThreads = 4;
-env.huggingFaceAccessToken = process.env.HUGGING_FACE_ACCESS_TOKEN;
+
+// Set access token from environment variable if available
+// Note: We'll access this directly in the pipeline options instead
+const HF_ACCESS_TOKEN = process.env.HUGGING_FACE_ACCESS_TOKEN || '';
 
 export interface AgentObservation {
   timestamp: number;
@@ -46,7 +50,8 @@ export class MultiAgentArbitrageSystem {
         'mixedbread-ai/mxbai-embed-xsmall-v1',
         { 
           device: 'webgpu',
-          huggingFaceAccessToken: env.huggingFaceAccessToken 
+          // Use the token directly in the options
+          accessToken: HF_ACCESS_TOKEN
         }
       );
 
@@ -75,7 +80,8 @@ export class MultiAgentArbitrageSystem {
       'onnx-community/distilbert-base-uncased-finetuned-sst-2-english',
       { 
         device: 'webgpu',
-        huggingFaceAccessToken: env.huggingFaceAccessToken 
+        // Use the token directly in the options
+        accessToken: HF_ACCESS_TOKEN
       }
     );
   }

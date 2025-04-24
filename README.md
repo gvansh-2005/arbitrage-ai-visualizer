@@ -1,8 +1,23 @@
+
 # Welcome to your Lovable project
 
 ## Project info
 
 **URL**: https://lovable.dev/projects/6496e5a0-e610-4828-b790-85d0f6d856ce
+
+## Hugging Face Transformers Integration
+
+This project uses Hugging Face's Transformers library to run transformer models directly in the browser. To use private or gated models, you'll need to set your Hugging Face access token:
+
+```sh
+# When running with Docker
+export HUGGING_FACE_ACCESS_TOKEN=your_token_here
+docker-compose up
+
+# Or set it in your environment before running locally
+export HUGGING_FACE_ACCESS_TOKEN=your_token_here
+npm run dev
+```
 
 ## How can I edit this code?
 
